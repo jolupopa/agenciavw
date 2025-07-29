@@ -26,22 +26,19 @@ interface Typeproperty {
 export default function Index( { ...props }: { typeproperties: Typeproperty [] } ) {
 
     const { typeproperties } = props;
-    const { flash } = usePage<{ flash?: { success?: string; error?: string; }}>().props;
+    const { flash } = usePage<{ flash?: { success?: string; error?: string } }>().props;
     const flashMessage = flash?.success || flash?.error;
-    const [showAlert, setShowAlert] = useState(flash?.success || flash?.error ? true : false );
-
-    console.log(flashMessage, flash, showAlert);
+    const [showAlert, setShowAlert] = useState(!!flashMessage);
 
     useEffect(() => {
-
-        if(flashMessage) {
-            const timer =  setTimeout(() => setShowAlert(false), 3000);
+        if (flashMessage) {
+            setShowAlert(true);
+            const timer = setTimeout(() => {
+                setShowAlert(false);
+            }, 3000);
             return () => clearTimeout(timer);
         }
-
-    }, [flashMessage]);
-
-    //console.log(flash);
+    }, [flash]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -78,7 +75,7 @@ export default function Index( { ...props }: { typeproperties: Typeproperty [] }
                         </thead>
                         <tbody>
                             { typeproperties.length > 0 ? (
-                            
+
                                 typeproperties.map((typeproperty, index) => (
                                 <tr key={index}>
                                     <td className="px-4 py-2 text-center border">{index + 1}</td>
@@ -100,7 +97,7 @@ export default function Index( { ...props }: { typeproperties: Typeproperty [] }
                                             <Pencil size={18}/>
                                         </Link>
                                         <Button
-                                        
+
                                             className='ms-2 bg-red-600 text-white p-2 rounded-lg cursor-pointer hover:opacity-90'
                                             onClick={ () => {
                                                             if(confirm('Estas seguro de eliminar este registro')) {
