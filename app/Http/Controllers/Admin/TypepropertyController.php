@@ -32,7 +32,7 @@ class TypepropertyController extends Controller
             };
 
 
-        $typeproperties = $typeproperties->orderBy('name')->paginate($perPage);
+        $typeproperties = $typeproperties->orderBy('name')->paginate($perPage)->withQueryString();;
 
         // dd($typeproperties);
        // dump($request->all());

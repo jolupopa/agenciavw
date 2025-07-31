@@ -18,17 +18,13 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-interface LinkProps {
+interface PaginationLinkProps {
     active: boolean;
     label: string;
-    url: string;
+    url: string | null; // Puede ser null para 'Previous'/'Next' en los extremos
 }
 
-interface Typeproperty {
-    id: number;
-    name: string;
-    active: boolean;
-}
+
 
 interface Meta {
     current_page: number;
@@ -37,12 +33,28 @@ interface Meta {
     total: number;
     from: number;
     to: number;
+     // Esta es la clave: 'links' dentro de 'meta' es el array de enlaces individuales
+    links: PaginationLinkProps[];
+    path: string; // La URL base para la paginación
+}
+
+interface TopLevelLinks {
+    first: string;
+    last: string;
+    prev: string | null;
+    next: string | null;
 }
 
 interface TypepropertyPagination {
     data: Typeproperty[];
-    links: LinkProps[];
+    links: TopLevelLinks;
     meta: Meta;
+}
+
+interface Typeproperty {
+    id: number;
+    name: string;
+    active: boolean;
 }
 
 interface filtersProps {
@@ -197,7 +209,7 @@ export default function Index( { typeproperties, filters }: IndexProps ) {
                     </table>
                 </div>
 
-                <Pagination links={typeproperties.links} meta={typeproperties.meta} />
+                <Pagination links={typeproperties.meta.links} meta={typeproperties.meta} />
 
 
 
