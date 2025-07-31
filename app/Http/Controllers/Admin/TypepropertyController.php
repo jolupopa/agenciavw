@@ -9,17 +9,37 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TypepropertyFormRequest;
+use App\Http\Resources\TypepropertiesResource;
+
 
 class TypepropertyController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //dd('List typeproperties');
-         $typeproperties = Typeproperty::select('id', 'name', 'active')->orderBy('name')->get();
-        return Inertia::render('typeproperties/index', ['typeproperties' => $typeproperties]);
+        $perPage = $request->input('per_page', 5);  // Get per_page from request, default to 5
+
+        $typeproperties = Typeproperty::query();
+
+        if($request->filled('search'))
+            {
+                $search = $request->search;
+
+            $typeproperties->where(fn($query) =>
+                $query->where('name', 'like', '%' . $search . '%'));
+            };
+
+
+        $typeproperties = $typeproperties->orderBy('name')->paginate($perPage);
+
+        // dd($typeproperties);
+       // dump($request->all());
+        return Inertia::render('typeproperties/index', [
+            'typeproperties' => TypepropertiesResource::collection($typeproperties),
+            'filters' =>$request->only(['search']),
+        ]);
     }
 
     /**
@@ -85,17 +105,20 @@ class TypepropertyController extends Controller
      */
     public function update(TypepropertyFormRequest $request, Typeproperty $typeproperty)
     {
-        if($typeproperty) {
-            $typeproperty->name = $request->name;
-            $typeproperty->active = $request->active;
-            $typeproperty->save();
-            return redirect()->route('typeproperty.index')->with('success', 'Tipo de propiedad ACTYALIZADA correctamente');
+        try {
+            if($typeproperty) {
+                $typeproperty->name = $request->name;
+                $typeproperty->active = $request->active;
+                $typeproperty->save();
+                return redirect()->route('typeproperty.index')->with('success', 'Tipo de propiedad ACTYALIZADA correctamente');
+            }
+            return redirect()->back()->with('error', 'Error al actualizar  el tipo de propiedad vuelve a intentarlo');
+        } catch (Exception $e) {
+            Log::error('fallo actualizando typeproperty' . $e->getMessage());
         }
-         return redirect()->back()->with('error', 'Error al actualizar  el tipo de propiedad vuelve a intentarlo');
-
     }
 
-    
+
 
     /**
      * Remove the specified resource from storage.
@@ -110,7 +133,7 @@ class TypepropertyController extends Controller
             return redirect()->back()->with('error', 'Error al eliminar, vuelve a intentarlo');
         } catch (Exeption $e) {
 
-            \Log::error('fallo eliminacion de typeproperty' . $e->getMessage());
+            Log::error('fallo eliminacion de typeproperty' . $e->getMessage());
 
         }
     }

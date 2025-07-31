@@ -1,11 +1,13 @@
 
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, usePage, router } from '@inertiajs/react';
+import { Head, Link, usePage, router, useForm } from '@inertiajs/react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useEffect, useState } from 'react';
-import { CirclePlusIcon, Eye, Pencil, Trash2 } from 'lucide-react';
+import { CirclePlusIcon, Eye, Pencil, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Pagination } from '@/components/ui/pagination';
+import { Input } from '@headlessui/react';
 
 
 
@@ -16,16 +18,47 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+interface LinkProps {
+    active: boolean;
+    label: string;
+    url: string;
+}
+
 interface Typeproperty {
     id: number;
     name: string;
     active: boolean;
 }
 
+interface Meta {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from: number;
+    to: number;
+}
 
-export default function Index( { ...props }: { typeproperties: Typeproperty [] } ) {
+interface TypepropertyPagination {
+    data: Typeproperty[];
+    links: LinkProps[];
+    meta: Meta;
+}
 
-    const { typeproperties } = props;
+interface filtersProps {
+    search: string;
+}
+
+interface IndexProps {
+    typeproperties: TypepropertyPagination,
+    filters: filtersProps
+}
+
+export default function Index( { typeproperties, filters }: IndexProps ) {
+    //console.log(filters);
+    console.log(typeproperties);
+
+    console.log( typeproperties );
     const { flash } = usePage<{ flash?: { success?: string; error?: string } }>().props;
     const flashMessage = flash?.success || flash?.error;
     const [showAlert, setShowAlert] = useState(!!flashMessage);
@@ -39,6 +72,34 @@ export default function Index( { ...props }: { typeproperties: Typeproperty [] }
             return () => clearTimeout(timer);
         }
     }, [flash]);
+
+    const { data, setData } = useForm({
+        search: filters.search || '',
+    });
+
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value  = e.target.value;
+        setData('search', value);
+
+        const queryString = value ? { search: value } : {};
+
+        router.get(route('typeproperty.index'), queryString,  {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    };
+
+    // To reset Aplied filter
+    const handleReset = () => {
+        setData('search', '');
+
+         router.get(route('typeproperty.index'), {},  {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    };
+
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -57,11 +118,23 @@ export default function Index( { ...props }: { typeproperties: Typeproperty [] }
                     </Alert>
                 )}
 
+                <div className="flex items-center justify-between">
+                    <Input
+                        className="h-10 w-1/3 border bg-gray-50 px-5"
+                        type="text"
+                        placeholder="Buscar..."
+                        name="search"
+                        onChange={handleChange}
+                        value={data.search}
+                    />
+                    <Button onClick={handleReset} className='h-10 cursor-pointer bg-red-600 hover:bg-red-500 text-white text-sm px-4 py-2 rounded-lg'>
+                        <X size={20} />
+                    </Button>
 
-
-                {/* Add typeproperty button */}
-                <div className="ml-auto">
-                    <Link className=" flex items-center bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-2 rounded-lg cursor-pointer" href={route('typeproperty.create')}><CirclePlusIcon  className={'me-2'} /> Nuevo</Link>
+                    {/* Add typeproperty button */}
+                    <div className="ml-auto">
+                        <Link className=" flex items-center bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-2 rounded-lg cursor-pointer" href={route('typeproperty.create')}><CirclePlusIcon  className={'me-2'} /> Nuevo</Link>
+                    </div>
                 </div>
                 <div className="overflow-hidden rounded-lg border bg-white shadow-sm">
                     <table className="w-full table-auto">
@@ -74,9 +147,9 @@ export default function Index( { ...props }: { typeproperties: Typeproperty [] }
                             </tr>
                         </thead>
                         <tbody>
-                            { typeproperties.length > 0 ? (
+                            { typeproperties.data.length > 0 ? (
 
-                                typeproperties.map((typeproperty, index) => (
+                                typeproperties.data.map((typeproperty, index) => (
                                 <tr key={index}>
                                     <td className="px-4 py-2 text-center border">{index + 1}</td>
                                     <td className="px-4 py-2 text-center border">{typeproperty.name}</td>
@@ -123,6 +196,8 @@ export default function Index( { ...props }: { typeproperties: Typeproperty [] }
 
                     </table>
                 </div>
+
+                <Pagination links={typeproperties.links} meta={typeproperties.meta} />
 
 
 
