@@ -23,8 +23,8 @@ interface PaginationProps {
 
 export const Pagination = ({ links, meta }: PaginationProps) => {
 
-      console.log("Links recibidos en Pagination:", links);
-    console.log("Tipo de links:", typeof links, Array.isArray(links)); // Esto es crucial
+     // console.log("Links recibidos en Pagination:", links);
+    // console.log("Tipo de links:", typeof links, Array.isArray(links)); // Esto es crucial
 
     return (
         <div className="flex items-center justify-between mt-2">

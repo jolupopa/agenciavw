@@ -19,6 +19,7 @@ class TypepropertyController extends Controller
      */
     public function index(Request $request)
     {
+       // dd($request->all());
         $perPage = $request->input('per_page', 5);  // Get per_page from request, default to 5
 
         $typeproperties = Typeproperty::query();
@@ -26,9 +27,11 @@ class TypepropertyController extends Controller
         if($request->filled('search'))
             {
                 $search = $request->search;
+               //  dd('Término de búsqueda recibido:', $search);
 
-            $typeproperties->where(fn($query) =>
-                $query->where('name', 'like', '%' . $search . '%'));
+                $typeproperties->where(fn($query) =>
+                $query->where('name', 'ILIKE', '%' . $search . '%'));
+                // $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%']));
             };
 
 

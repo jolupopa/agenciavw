@@ -3,7 +3,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, usePage, router, useForm } from '@inertiajs/react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { CirclePlusIcon, Eye, Pencil, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Pagination } from '@/components/ui/pagination';
@@ -67,13 +67,16 @@ interface IndexProps {
 }
 
 export default function Index( { typeproperties, filters }: IndexProps ) {
-    //console.log(filters);
-    console.log(typeproperties);
+    console.log('filtro:',filters);
+    //console.log(typeproperties);
 
     console.log( typeproperties );
     const { flash } = usePage<{ flash?: { success?: string; error?: string } }>().props;
     const flashMessage = flash?.success || flash?.error;
     const [showAlert, setShowAlert] = useState(!!flashMessage);
+
+     // Referencia para el temporizador de debouncing
+    const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         if (flashMessage) {
@@ -94,6 +97,24 @@ export default function Index( { typeproperties, filters }: IndexProps ) {
         const value  = e.target.value;
         setData('search', value);
 
+         // Limpia el temporizador anterior si existe
+        if (debounceTimeout.current) {
+            clearTimeout(debounceTimeout.current);
+        }
+
+         // Establece un nuevo temporizador
+        debounceTimeout.current = setTimeout(() => {
+            const queryString = value ? { search: value } : {};
+
+            router.get(route('typeproperty.index'), queryString, {
+                preserveScroll: true,
+                preserveState: true,
+                // Puedes añadir un `onFinish` o `onSuccess` para depurar si la solicitud se completa
+                // onSuccess: () => console.log('Búsqueda completada con éxito'),
+                // onError: (errors) => console.error('Error en búsqueda:', errors),
+            });
+        }, 300); // Retraso de 300 milisegundos (ajusta según necesites)
+
         const queryString = value ? { search: value } : {};
 
         router.get(route('typeproperty.index'), queryString,  {
@@ -104,6 +125,11 @@ export default function Index( { typeproperties, filters }: IndexProps ) {
 
     // To reset Aplied filter
     const handleReset = () => {
+         // Limpia el temporizador de debouncing al resetear
+        if (debounceTimeout.current) {
+            clearTimeout(debounceTimeout.current);
+        }
+
         setData('search', '');
 
          router.get(route('typeproperty.index'), {},  {
