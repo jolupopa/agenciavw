@@ -2,6 +2,8 @@
 
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\TypepropertyController;
 
 Route::get('/', function () {
@@ -13,6 +15,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
     Route::resource('typeproperty', TypepropertyController::class);
+    Route::resource('category', CategoryController::class);
+    Route::resource('properties', PropertyController::class);
 });
 
 require __DIR__.'/settings.php';

@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('typeproperties', function (Blueprint $table) {
+        Schema::create('land_details', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug');
-            $table->boolean('active')->default(true);
+            $table->decimal('area_sq_meters', 10, 2);
+            $table->string('soil_type');
+            $table->decimal('price', 10, 2);
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('typeproperties');
+        Schema::dropIfExists('land_details');
     }
 };

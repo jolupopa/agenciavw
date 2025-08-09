@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('typeproperties', function (Blueprint $table) {
+        Schema::create('zonas', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+             $table->string('name');
             $table->string('slug');
-            $table->boolean('active')->default(true);
+            $table->foreignId('distrito_id')->nullable()->on('distritos');
+            $table->foreignId('provincia_id')->nullable()->on('provincias');
+            $table->foreignId('departamento_id')->nullable()->on('departamentos');
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('typeproperties');
+        Schema::dropIfExists('zonas');
     }
 };

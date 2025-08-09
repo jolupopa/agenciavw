@@ -19,6 +19,18 @@ const mainNavItems: NavItem[] = [
         href: '/typeproperty',
         icon: LayoutGrid,
     },
+
+    {
+        title: 'Caterorias ',
+        href: route('category.index'),
+        icon: LayoutGrid,
+    },
+
+    {
+        title: 'Propiedades ',
+        href: route('properties.index'),
+        icon: LayoutGrid,
+    },
 ];
 
 const footerNavItems: NavItem[] = [
