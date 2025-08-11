@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('land_details', function (Blueprint $table) {
+        Schema::create('land_properties', function (Blueprint $table) {
             $table->id();
-            $table->decimal('area_sq_meters', 10, 2);
-            $table->string('soil_type');
+            $table->foreignId('property_id')->constrained()->cascadeOnDelete();
+            $table->decimal('area', 10, 2);
             $table->decimal('price', 10, 2);
             $table->timestamps();
         });

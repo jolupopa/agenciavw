@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ApartamentDetails>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\HabitatProyect>
  */
-class HouseDetailFactory extends Factory
+class HabitatProyectFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,8 +17,7 @@ class HouseDetailFactory extends Factory
     public function definition(): array
     {
         return [
-            
-               
+            'proyect_id' => $this->faker->unique(),
             'subtitle' => $this->faker->paragraph($nbSentences = 1, $variableNbSentences = true),
 		    'price' => rand(15000, 50000),
             'detalle' => $this->faker->paragraph($nbSentences = 3, $variableNbSentences = true),

@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('properties', function (Blueprint $table) {
+        Schema::create('proyects', function (Blueprint $table) {
             $table->id();
-
             $table->string('code')->nullable();
             $table->string('title');
             $table->string('address');
@@ -21,10 +20,7 @@ return new class extends Migration
             $table->string('longitud')->nullable();
 			$table->string('latitud')->nullable();
 
-            $table->unsignedBigInteger('parent_id')->nullable();
-            $table->foreign('parent_id')->references('id')->on('properties')->onDelete('cascade'); // polimorfica recursia
-            $table->unsignedBigInteger('property_id'); // ID del detalle (ej. LandDetail, ApartmentDetail)
-            $table->string('property_type'); // Nombre del modelo de detalle (ej. App\Models\ApartmentDetail)
+            $table->boolean('is_land_proyect')->default(false);
 
             $table->enum('visibilidad', ['regular', 'destacada', 'superdestacada'])->default('regular');
             $table->enum('estado', ['edicion', 'publicada', 'vencida', 'baneada'])->default('edicion');
@@ -36,14 +32,13 @@ return new class extends Migration
             $table->foreignId('provincia_id')->nullable()->constrained('provincias')->onDelete('cascade'); // Asumiendo tabla 'provincias'
             $table->foreignId('departamento_id')->nullable()->constrained('departamentos')->onDelete('cascade'); // Asumiendo tabla 'departamentos'
             // foreing key
-            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null'); // Relación con 'Category' (venta, alquiler, proyecto)
+            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null'); // Relación con 'Category' (venta o alquiler)
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('typeproperty_id')->nullable()->constrained('typeproperties')->onDelete('set null'); // Relación con 'Typeproperty' (casa, depto, terreno)
 
 	        $table->timestamp('published_at')->nullable();
 			$table->timestamp('published_end')->nullable();
             $table->softDeletes();
-
             $table->timestamps();
         });
     }
@@ -53,6 +48,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('properties');
+        Schema::dropIfExists('proyects');
     }
 };

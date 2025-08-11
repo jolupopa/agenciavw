@@ -4,11 +4,14 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\PropertyProyectController;
 use App\Http\Controllers\Admin\TypepropertyController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
+
+Route::get('/items', [PropertyProyectController::class, 'index'])->name('items.index');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {

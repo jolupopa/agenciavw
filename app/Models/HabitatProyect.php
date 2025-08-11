@@ -4,14 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class HouseDetail extends Model
+class HabitatProyect extends Model
 {
     /** @use HasFactory<\Database\Factories\ApartamentDetailsFactory> */
     use HasFactory;
 
       protected $fillable = [
 
+            'proyect_id',
             'subtitle',
 		    'price',
             'detalle',
@@ -28,10 +30,10 @@ class HouseDetail extends Model
     ];
 
     /**
-     * Get the property that owns the apartment details.
+     * Get the property that own property.
      */
-    public function property()
+    public function proyect(): BelongsTo
     {
-        return $this->morphOne(Property::class, 'property');
+        return $this->belongsTo(Proyect::class);
     }
 }

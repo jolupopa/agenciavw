@@ -28,7 +28,7 @@ const mainNavItems: NavItem[] = [
 
     {
         title: 'Propiedades ',
-        href: route('properties.index'),
+        href: route('items.index'),
         icon: LayoutGrid,
     },
 ];

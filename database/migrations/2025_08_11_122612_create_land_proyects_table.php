@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('typeproperties', function (Blueprint $table) {
+        Schema::create('land_proyects', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug');
-            $table->enum('type', ['terreno', 'habitat', 'proyecto']);
-            $table->boolean('active')->default(true);
+            $table->foreignId('proyect_id')->constrained()->cascadeOnDelete();
+            $table->decimal('area', 10, 2);
+            $table->decimal('price', 10, 2);
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('typeproperties');
+        Schema::dropIfExists('land_proyects');
     }
 };

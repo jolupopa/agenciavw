@@ -4,14 +4,15 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Property;
-use App\Models\HabitatProperty;
-use App\Models\LandProperty;
+use App\Models\HabitatProyect;
+use App\Models\LandProyect;
+use App\Models\Proyect;
 use App\Models\Category;
 use App\Models\Typeproperty;
 use Faker\Generator as Faker;
 
-class PropertySeeder extends Seeder
+
+class ProyectSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -29,16 +30,17 @@ class PropertySeeder extends Seeder
         $categoryIds = [1, 2, 3]; // 1 = Venta, 2 = Alquiler,
 
         // 1. Crear 10 propiedades de tipo 'terreno' con Land
-        $property= Property::factory(10)->create([
+        $proyect= Proyect::factory(10)->create([
 
             'typeproperty_id' => rand(5, 7),
 
             'category_id' => rand(1, 2),
-            'is_land_property' => true,
-        ])->each(function($property) {
-                LandProperty::factory()->create(
+            'is_land_proyect' => true,
+        ])->each(function($proyect) {
+                    $num_anuncios = rand(1, 3);
+                LandProyect::factory($num_anuncios)->create(
                     [
-                        'property_id' => $property->id,
+                        'proyect_id' => $proyect->id,
 
                     ]
                 );
@@ -46,38 +48,22 @@ class PropertySeeder extends Seeder
         });
 
         // 2. Crear 10 propiedades de tipo 'habitat' con Habitat
-        $property= Property::factory(10)->create([
+        $proyect= Proyect::factory(10)->create([
 
             'typeproperty_id' => rand(1, 4),
             'category_id' => rand(1, 2),
-        ])->each(function($property) {
-                HabitatProperty::factory()->create(
+             'is_land_proyect' => false,
+        ])->each(function($proyect) {
+                        $num_anuncios = rand(1, 3);
+                HabitatProyect::factory($num_anuncios)->create(
                     [
-                        'property_id' => $property->id,
+                        'proyect_id' => $proyect->id,
+
 
                     ]
                 );
 
         });
-
-        // 3. Crear 10 propiedades de tipo 'project' con Project
-        // $property= Property::factory(10)->create([
-
-        //     'typeproperty_id' => rand(8, 9),
-        //     'tipo_anuncio' => 'proyecto',
-        //     'category_id' => 3,
-        // ])->each(function($property) {
-        //      $num_apartament = rand(1, 3);
-        //         Proyect::factory($num_apartament)->create(
-        //             [
-        //                 'property_id' => $property->id,
-
-        //             ]
-        //         );
-
-        // });
-
-
 
     }
 }

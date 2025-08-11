@@ -4,24 +4,26 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class LandDetail extends Model
+class LandProperty extends Model
 {
     /** @use HasFactory<\Database\Factories\LandDetailsFactory> */
     use HasFactory;
 
 
     protected $fillable = [
-        'area_sq_meters',
-        'soil_type',
+        'property_id',
+        'area',
         'price',
     ];
 
     /**
      * Get the property that owns the land details.
      */
-    public function property()
+
+    public function property(): BelongsTo
     {
-        return $this->morphOne(Property::class, 'property');
+        return $this->belongsTo(Property::class);
     }
 }

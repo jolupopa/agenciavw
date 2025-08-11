@@ -2,16 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 
-
-class Property extends Model
+class Proyect extends Model
 {
-    /** @use HasFactory<\Database\Factories\PropertyFactory> */
+     /** @use HasFactory<\Database\Factories\PropertyFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -22,7 +21,7 @@ class Property extends Model
         'longitud',
         'latitud',
 
-        'is_land_property',
+        'is_land_proyect',
 
         'visibilidad',
         'estado',
@@ -58,14 +57,14 @@ class Property extends Model
 		return $this->belongsTo(Typeproperty::class, 'typeproperty_id');
 	}
 
-     public function land_proyect(): HasOne
+     public function land_property(): HasOne
     {
-        return $this->hasMany(LandPropert::class, 'proyect_id');
+        return $this->hasOne(LandPropert::class, 'property_id');
     }
 
-    public function habitat_proyect(): HasOne
+    public function habitat_property(): HasOne
     {
-        return $this->hasMany(HabitatProperty::class, 'proyect_id');
+        return $this->hasOne(HabitatProperty::class, 'property_id');
     }
 
     // public function proyects(): HasMany

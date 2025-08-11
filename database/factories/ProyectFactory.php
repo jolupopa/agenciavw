@@ -4,15 +4,12 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-
-use App\Models\Property;
-
-
+use App\Models\Proyect;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Property>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Proyect>
  */
-class PropertyFactory extends Factory
+class ProyectFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -21,15 +18,16 @@ class PropertyFactory extends Factory
      */
     public function definition(): array
     {
-
         return [
+
+
             'code' => $this->faker->unique()->bothify('??####'),
             'title' => $this->faker->sentence($nbWords = 6, $variableNbWords = true),
             'address' =>  Str::limit($this->faker->address, 42),
 
             'longitud' => '-79.0287019135900',
             'latitud' => '-8.111851918254834',
-            "is_land_property" => false,
+            'is_land_proyect' => false,
 
 
             'visibilidad' => $this->faker->randomElement($array = array ('regular','destacada', 'superdestacada')),
@@ -52,6 +50,5 @@ class PropertyFactory extends Factory
             'published_end' => $this->faker->dateTimeBetween($startDate = '-5 days', $endDate = '30 days', $timezone = null),
 
         ];
-
     }
 }
