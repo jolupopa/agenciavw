@@ -20,11 +20,11 @@ class TypepropertyController extends Controller
     public function index(Request $request)
     {
        // dd($request->all());
-        $perPage = $request->input('per_page', 5);  // Get per_page from request, default to 5
+       
 
         $typeproperties = Typeproperty::query();
 
-        if($request->filled('search'))
+            if($request->filled('search'))
             {
                 $search = $request->search;
                //  dd('Término de búsqueda recibido:', $search);
@@ -34,11 +34,15 @@ class TypepropertyController extends Controller
                 // $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%']));
             };
 
+             $perPage = (int) ($request->per_page ?? 5);
 
-        $typeproperties = $typeproperties->orderBy('name')->paginate($perPage)->withQueryString();;
+             if ($perPage === -1 ) {
+                $typeproperties = $typeproperties->orderBy('name')->get();
+             } else {
+                $typeproperties = $typeproperties->orderBy('name')->paginate($perPage)->withQueryString();
+             }
 
-        // dd($typeproperties);
-       // dump($request->all());
+
         return Inertia::render('typeproperties/index', [
             'typeproperties' => TypepropertiesResource::collection($typeproperties),
             'filters' =>$request->only(['search']),

@@ -70,7 +70,7 @@ export default function Index( { typeproperties, filters }: IndexProps ) {
     console.log('filtro:',filters);
     //console.log(typeproperties);
 
-    console.log( typeproperties );
+    console.log('tipodepropiedades :', typeproperties );
     const { flash } = usePage<{ flash?: { success?: string; error?: string } }>().props;
     const flashMessage = flash?.success || flash?.error;
     const [showAlert, setShowAlert] = useState(!!flashMessage);
@@ -90,6 +90,7 @@ export default function Index( { typeproperties, filters }: IndexProps ) {
 
     const { data, setData } = useForm({
         search: filters.search || '',
+        per_page: typeproperties.meta.per_page,
     });
 
 
@@ -104,23 +105,18 @@ export default function Index( { typeproperties, filters }: IndexProps ) {
 
          // Establece un nuevo temporizador
         debounceTimeout.current = setTimeout(() => {
-            const queryString = value ? { search: value } : {};
-
-            router.get(route('typeproperty.index'), queryString, {
-                preserveScroll: true,
-                preserveState: true,
-                // Puedes añadir un `onFinish` o `onSuccess` para depurar si la solicitud se completa
-                // onSuccess: () => console.log('Búsqueda completada con éxito'),
-                // onError: (errors) => console.error('Error en búsqueda:', errors),
-            });
+            router.get(
+                route('typeproperty.index'),
+                {
+                    search: value,
+                    per_page: data.per_page,
+                },
+                {
+                    preserveScroll: true,
+                    preserveState: true,
+                },
+            );
         }, 300); // Retraso de 300 milisegundos (ajusta según necesites)
-
-        const queryString = value ? { search: value } : {};
-
-        router.get(route('typeproperty.index'), queryString,  {
-            preserveScroll: true,
-            preserveState: true,
-        });
     };
 
     // To reset Aplied filter
@@ -136,6 +132,23 @@ export default function Index( { typeproperties, filters }: IndexProps ) {
             preserveScroll: true,
             preserveState: true,
         });
+    };
+
+    const handlePerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        setData('per_page', parseInt(value, 10));
+
+        router.get(
+            route('typeproperty.index'),
+            {
+                search: data.search,
+                per_page: value,
+            },
+            {
+                preserveScroll: true,
+                preserveState: true,
+            },
+        );
     };
 
 
@@ -169,6 +182,22 @@ export default function Index( { typeproperties, filters }: IndexProps ) {
                         <X size={20} />
                     </Button>
 
+                    <div className="ml-4">
+                        <select
+                            name="per_page"
+                            id="per_page"
+                            value={data.per_page}
+                            onChange={handlePerPageChange}
+                            className="h-10 border bg-gray-50 px-5"
+                        >
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+
                     {/* Add typeproperty button */}
                     <div className="ml-auto">
                         <Link className=" flex items-center bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-2 rounded-lg cursor-pointer" href={route('typeproperty.create')}><CirclePlusIcon  className={'me-2'} /> Nuevo</Link>
@@ -189,7 +218,7 @@ export default function Index( { typeproperties, filters }: IndexProps ) {
 
                                 typeproperties.data.map((typeproperty, index) => (
                                 <tr key={index}>
-                                    <td className="px-4 py-2 text-center border">{index + 1}</td>
+                                    <td className="px-4 py-2 text-center border">{typeproperties.meta.from + index}</td>
                                     <td className="px-4 py-2 text-center border">{typeproperty.name}</td>
                                     <td className="px-4 py-2 text-center border">{typeproperty.active ? 'Si' : 'No'}</td>
                                     <td className="px-4 py-2 text-center border">
@@ -235,7 +264,7 @@ export default function Index( { typeproperties, filters }: IndexProps ) {
                     </table>
                 </div>
 
-                <Pagination links={typeproperties.meta.links} meta={typeproperties.meta} />
+                <Pagination links={typeproperties.meta.links} meta={typeproperties.meta}  />
 
 
 
